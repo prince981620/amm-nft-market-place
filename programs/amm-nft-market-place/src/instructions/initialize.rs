@@ -3,8 +3,6 @@ use anchor_spl::token_interface::{Mint,TokenInterface};
 
 use crate::state::marketplace::Marketplace;
 
-
-
 #[derive(Accounts)]
 #[instruction(name: String)]
 pub struct Initialize <'info> { // we need admin to initialize
