@@ -13,7 +13,7 @@ pub struct Initialize <'info> { // we need admin to initialize
     #[account(
         init,
         payer = admin,
-        seeds = [b"marketplce", name.as_str().as_bytes()],
+        seeds = [b"marketplace", name.as_str().as_bytes()],
         bump,
         space = Marketplace::INIT_SPACE
     )]
@@ -35,8 +35,8 @@ pub struct Initialize <'info> { // we need admin to initialize
     )]
     pub reward_mint: InterfaceAccount<'info, Mint>,
 
-    pub token_program: Interface<'info, TokenInterface>,
-    pub system_program: Program<'info, System>
+    pub system_program: Program<'info, System>,
+    pub token_program: Interface<'info, TokenInterface>
 }
 
 impl <'info> Initialize <'info> {
