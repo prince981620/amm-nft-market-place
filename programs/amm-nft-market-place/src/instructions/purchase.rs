@@ -3,7 +3,7 @@ use anchor_lang::{prelude::*,
 };
 
 use anchor_spl::{
-    token::{close_account, CloseAccount}, 
+    token::{close_account, mint_to, CloseAccount, MintTo}, 
     token_interface::{
         transfer_checked, 
         Mint, 
@@ -35,13 +35,22 @@ pub struct Purchase <'info> {
     pub taker_ata: InterfaceAccount<'info, TokenAccount>,
 
     #[account(
-        // init_if_needed,  // avoid using init_if_needed
+        // init_if_needed,  // avoid using init_if_needed create and init on client side using getorcreateata
         // payer = taker,
         mut,
         associated_token::mint = reward_mint,
         associated_token::authority = taker
     )]
     pub taker_rewards_ata: InterfaceAccount<'info, TokenAccount>,
+
+    #[account(
+        // init_if_needed,  // avoid using init_if_needed create and init on client side using getorcreateata
+        // payer = taker,
+        mut,
+        associated_token::mint = reward_mint,
+        associated_token::authority = maker
+    )]
+    pub maker_rewards_ata: InterfaceAccount<'info, TokenAccount>,
 
     #[account(
         mut,
@@ -168,5 +177,50 @@ impl <'info> Purchase <'info> {
         let cpi_ctx = CpiContext::new_with_signer(cpi_program, close_accounts, signer_seeds);
 
         close_account(cpi_ctx)
+    }
+
+    pub fn reward_both_parties (&mut self) -> Result<()> {
+        let cpi_program = self.token_program.to_account_info();
+        
+        let mint_accounts = MintTo {
+            mint: self.reward_mint.to_account_info(),
+            to: self.maker_rewards_ata.to_account_info(),
+            authority: self.marketplace.to_account_info()
+        };
+
+        let seeds:&[&[u8]] = &[
+            b"marketplace",
+            &self.marketplace.name.as_str().as_bytes(),
+            &[self.marketplace.bump]
+        ];
+
+        let signer_seeds = &[&seeds[..]];
+
+        let cpi_ctx = CpiContext::new_with_signer(cpi_program, mint_accounts, signer_seeds);
+
+        mint_to(cpi_ctx, self.listing.price)?;
+
+        let cpi_program = self.token_program.to_account_info();
+        
+        let mint_accounts = MintTo {
+            mint: self.reward_mint.to_account_info(),
+            to: self.taker_rewards_ata.to_account_info(),
+            authority: self.marketplace.to_account_info()
+        };
+
+        let seeds:&[&[u8]] = &[
+            b"marketplace",
+            &self.marketplace.name.as_str().as_bytes(),
+            &[self.marketplace.bump]
+        ];
+
+        let signer_seeds = &[&seeds[..]];
+
+        let cpi_ctx = CpiContext::new_with_signer(cpi_program, mint_accounts, signer_seeds);
+
+        mint_to(cpi_ctx, self.listing.price)?;
+
+        Ok(())
+
     }
 }
