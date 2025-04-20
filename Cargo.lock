@@ -60,14 +60,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "amm-nft-market-place"
-version = "0.1.0"
-dependencies = [
- "anchor-lang",
- "anchor-spl",
-]
-
-[[package]]
 name = "anchor-attribute-access-control"
 version = "0.31.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -904,6 +896,14 @@ dependencies = [
  "num-traits",
  "solana-program",
  "thiserror 1.0.69",
+]
+
+[[package]]
+name = "nft-marketplace"
+version = "0.1.0"
+dependencies = [
+ "anchor-lang",
+ "anchor-spl",
 ]
 
 [[package]]

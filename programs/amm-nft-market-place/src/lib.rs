@@ -12,7 +12,7 @@ pub use state::*;
 declare_id!("BbgakLVcLsZF5LizDpZ5dP89yCZMiarvMEers3RxmHyS");
 
 #[program]
-pub mod amm_nft_market_place {
+pub mod nft_marketplace {
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
