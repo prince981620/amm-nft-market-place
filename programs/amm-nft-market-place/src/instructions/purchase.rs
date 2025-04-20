@@ -96,6 +96,14 @@ pub struct Purchase <'info> {
 }
 
 impl <'info> Purchase <'info> {
+    pub fn purchase(&mut self) -> Result<()> {
+        self.send_sol()?;
+        self.send_nft()?;
+        self.close_mint_vault()?;
+        self.reward_both_parties()?;
+
+        Ok(())
+    }
     pub fn send_sol (&mut self) -> Result<()> {
 
         let marketplace_fee = (self.marketplace.fee as u64)
